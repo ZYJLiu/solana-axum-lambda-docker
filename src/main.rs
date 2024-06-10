@@ -1,5 +1,10 @@
 // cargo build --release
 // cargo watch -q -c -w src/ -x "run"
+
+// cargo lambda watch
+// http://localhost:9000
+//
+// cargo lambda build --release --arm64
 use axum::{
     extract::Json,
     http::StatusCode,
@@ -14,6 +19,11 @@ use std::net::{Ipv4Addr, SocketAddr};
 use std::process::Command;
 use tokio::net::TcpListener;
 
+mod error;
+mod program;
+mod routes;
+use self::routes::*;
+
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     // required to enable CloudWatch error logging by the runtime
@@ -22,6 +32,7 @@ async fn main() -> Result<(), Error> {
     print!("hello");
 
     let app = Router::new()
+        .route("/build", post(build))
         .route("/hello", get(hello))
         .route("/", get(get_cargo_sbf_build_help))
         .route("/", post(get_solana_account));

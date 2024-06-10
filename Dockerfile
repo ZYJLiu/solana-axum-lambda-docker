@@ -39,6 +39,27 @@ RUN mkdir -p /home/appuser/.local/share/solana && \
     chmod -R 755 /home/appuser/.local/share/solana
 ENV PATH="/home/appuser/.local/share/solana/install/active_release/bin:${PATH}"
 
+# Nope not working, Lambda readonly file system
+# Read-only file system (os error 30)
+
+# Copy programs dir and set permissions
+COPY programs /home/appuser/programs
+# Build the default program
+RUN cargo build-sbf --manifest-path /home/appuser/programs/Cargo.toml
+RUN chown -R appuser:appuser /home/appuser/programs
+RUN chmod -R 755 /home/appuser/programs
+
+# Set ownership and permissions for the .cargo directory
+RUN chown -R appuser:appuser /home/appuser/.cargo
+RUN chmod -R 755 /home/appuser/.cargo
+
+# Copy entrypoint script as root and set permissions
+COPY copy.sh /home/appuser/copy.sh
+RUN chmod +x /home/appuser/copy.sh
+
+# # Set CARGO_TARGET_DIR to a temporary directory for Lambda
+# ENV CARGO_TARGET_DIR=/tmp/target
+
 # Switch to non-root user
 USER appuser
 WORKDIR /home/appuser
@@ -46,7 +67,10 @@ WORKDIR /home/appuser
 # Copy the built binary from the build stage
 COPY --from=build /build/target/lambda/axum-solana/bootstrap .
 
+# # Start server
+# CMD ["./bootstrap"]
+
 # Start server
-CMD ["./bootstrap"]
+CMD ["/home/appuser/copy.sh"]
 
 EXPOSE 8080

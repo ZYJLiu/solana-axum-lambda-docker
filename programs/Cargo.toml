@@ -1,0 +1,16 @@
+[package]
+name = "solpg"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+path = "default/src/lib.rs"
+
+[profile.release]
+overflow-checks = true
+incremental = true
+
+[dependencies]
+anchor-lang = "0.29.0"
+anchor-spl = "0.29.0"
