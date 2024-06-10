@@ -33,6 +33,7 @@ async fn main() -> Result<(), Error> {
 
     let app = Router::new()
         .route("/build", post(build))
+        .route("/deploy/:uuid", get(deploy))
         .route("/hello", get(hello))
         .route("/", get(get_cargo_sbf_build_help))
         .route("/", post(get_solana_account));

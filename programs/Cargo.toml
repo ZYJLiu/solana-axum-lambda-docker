@@ -5,7 +5,7 @@ edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-path = "d3200dc3-c6b9-4071-a2ef-4c27e6202659/src/lib.rs"
+path = "846281ba-88a6-4a9b-94ca-c0b09c230d17/src/lib.rs"
 
 [features]
 no-entrypoint = []
