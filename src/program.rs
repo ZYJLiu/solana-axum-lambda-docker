@@ -1,11 +1,14 @@
 use std::{fs, path::Path, process::Command, sync::OnceLock};
 
-use anchor_syn::idl::{parse::file::parse as parse_idl, types::Idl};
+// use anchor_syn::idl::{parse::file::parse as parse_idl, types::Idl};
 use anyhow::anyhow;
 use regex::Regex;
 
+use anchor_lang_idl::build::build_idl;
+use anchor_lang_idl::types::Idl;
+
 /// Directory name of where the programs are stored
-const PROGRAMS_DIR: &str = "/tmp/programs";
+const PROGRAMS_DIR: &str = "programs";
 
 /// Maximum amount of files to pass to the [`build`] function.
 const MAX_FILE_AMOUNT: usize = 64;
@@ -50,7 +53,7 @@ pub fn build(
         return Err(anyhow!("Invalid path"));
     }
 
-    // Write files
+    // // Write files
     let program_path = Path::new(PROGRAMS_DIR).join(program_name);
     for [path, content] in files {
         // TODO: Send relative path from client and remove this line
@@ -96,19 +99,32 @@ pub fn build(
 
     // Generate IDL if it's an Anchor program
     let lib_path = program_path.join("src").join("lib.rs");
+
+    // 0.30.0 IDL
     let ret = fs::read_to_string(&lib_path)?
         .contains("anchor_lang")
-        .then(|| {
-            parse_idl(
-                lib_path,
-                "0.1.0".into(),
-                seeds_feature,
-                no_docs,
-                safety_checks,
-            )
-        })
+        .then(|| build_idl(&program_path, seeds_feature, !safety_checks, no_docs))
         .transpose()
         .map_or_else(|e| (format!("Error: {e}"), None), |idl| (stderr, idl));
+
+    // let ret = fs::read_to_string(&lib_path)?
+    //     .contains("anchor_lang")
+    //     .then(|| {
+    //         parse_idl(
+    //             lib_path,
+    //             "0.1.0".into(),
+    //             seeds_feature,
+    //             no_docs,
+    //             safety_checks,
+    //         )
+    //     })
+    //     .transpose()
+    //     // .map_or_else(|e| (format!("Error: {e}"), None), |idl| (stderr, idl));
+    //     .map_or_else(
+    //         |e| Err(anyhow!("Error: {}", e)),
+    //         |idl| Ok((String::new(), idl)),
+    //     )?;
+
     Ok(ret)
 }
 

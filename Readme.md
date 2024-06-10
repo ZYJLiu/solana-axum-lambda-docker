@@ -1,3 +1,85 @@
+Working locally to build 0.30.0 with new IDL
+
+```
+{
+    "stderr": "   Compiling solpg v0.1.0 (/programs)\n    Finished release [optimized] target(s) in 1.39s\n",
+    "uuid": "d3200dc3-c6b9-4071-a2ef-4c27e6202659",
+    "idl": {
+        "address": "3qn2eBQ7UKJirQzq2Km88ek1VDfzcTFaUHuCuuJhJFMV",
+        "metadata": {
+            "name": "hello_anchor",
+            "version": "0.1.0",
+            "spec": "0.1.0"
+        },
+        "instructions": [
+            {
+                "name": "initialize",
+                "discriminator": [
+                    175,
+                    175,
+                    109,
+                    31,
+                    13,
+                    152,
+                    155,
+                    237
+                ],
+                "accounts": [
+                    {
+                        "name": "new_account",
+                        "writable": true,
+                        "signer": true
+                    },
+                    {
+                        "name": "signer",
+                        "writable": true,
+                        "signer": true
+                    },
+                    {
+                        "name": "system_program"
+                    }
+                ],
+                "args": [
+                    {
+                        "name": "data",
+                        "type": "u64"
+                    }
+                ]
+            }
+        ],
+        "accounts": [
+            {
+                "name": "NewAccount",
+                "discriminator": [
+                    176,
+                    95,
+                    4,
+                    118,
+                    91,
+                    177,
+                    125,
+                    232
+                ]
+            }
+        ],
+        "types": [
+            {
+                "name": "NewAccount",
+                "type": {
+                    "kind": "struct",
+                    "fields": [
+                        {
+                            "name": "data",
+                            "type": "u64"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}
+```
+
 Worked locally but not deployed, AWS Lambda readonly file system
 Read-only file system (os error 30)
 
